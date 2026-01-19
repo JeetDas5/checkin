@@ -29,6 +29,7 @@ enum AttendanceStatus {
   PRESENT
   ABSENT
   EXCUSED
+  NOT_APPLICABLE
 }
 
 model Domain {
@@ -42,10 +43,13 @@ model Domain {
 }
 
 model User {
-  id    String @id @default(cuid())
-  name  String
-  email String @unique
-  role  Role   @default(USER)
+  id          String  @id @default(cuid())
+  name        String
+  email       String  @unique
+  password    String 
+  roll        String  @unique
+  role        Role    @default(USER)
+  profile_pic String?
 
   // Admin/User belongs to a domain (Super-admin can be null)
   domainId String?
@@ -64,11 +68,14 @@ model Event {
   id    String @id @default(cuid())
   title String
 
-  // domainId null => society-wide event (optional feature)
+  // domainId null => GBM (optional feature)
   domainId String?
   domain   Domain? @relation(fields: [domainId], references: [id], onDelete: SetNull)
 
-  date   DateTime
+  date DateTime
+
+  // startTime DateTime
+  // endTime   DateTime
 
   status EventStatus @default(OPEN)
 
