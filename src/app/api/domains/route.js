@@ -1,66 +1,71 @@
-import { prisma } from "@/lib/prisma";
-import { createDomainSchema } from "@/lib/validators/domain.schema";
 import { NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/auth/auth";
+import { requireRole } from "@/lib/auth/rbac";
+import { createDomainSchema } from "@/lib/validators/domain.schema";
+import { prisma } from "@/lib/prisma";
 
-export async function GET() {
-  try {
-    const domains = await prisma.domain.findMany({
-      orderBy: { createdAt: "desc" },
-    });
+export async function POST(req) {
+  const currentUser = await getCurrentUser();
 
-    console.log(domains);
+  if (!requireRole(currentUser, ["SUPER_ADMIN"])) {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
 
-    return NextResponse.json({ domains }, { status: 200 });
-  } catch (err) {
+  const body = await req.json();
+  const parsed = createDomainSchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json(
-      { message: "Failed to fetch domains" },
-      { status: 500 }
+      { message: "Validation error", errors: parsed.error.flatten() },
+      { status: 400 }
     );
   }
-}
 
-export async function POST(request) {
   try {
-    const body = await request.json();
-    const parsedBody = createDomainSchema.safeParse(body);
-    if (!parsedBody.success) {
+    const existingDomain = await prisma.domain.findUnique({
+      where: { name: parsed.data.name },
+    });
+
+    if (existingDomain) {
       return NextResponse.json(
-        {
-          message: "Domain Validation error",
-          errors: parsedBody.error.flatten(),
-        },
-        { status: 400 }
+        { message: "Domain already exists" },
+        { status: 409 }
       );
     }
 
     const domain = await prisma.domain.create({
-      data: {
-        name: parsedBody.data.name,
-      },
+      data: { name: parsed.data.name },
     });
 
     if (!domain) {
       return NextResponse.json(
-        { message: "Failed to create domain" },
+        { message: "Domain not created" },
         { status: 500 }
       );
     }
 
     return NextResponse.json(
-      { message: "Domain created successfully", domain },
+      { message: "Domain created", domain },
       { status: 201 }
     );
-  } catch (error) {
-    console.log("Error creating domain", error);
-
+  } catch (err) {
     if (err?.code === "P2002") {
       return NextResponse.json(
         { message: "Domain already exists" },
         { status: 409 }
       );
     }
-    return NextResponse.json("Error creating domain", {
-      status: 500,
-    });
+    return NextResponse.json(
+      { message: "Server error", error: String(err) },
+      { status: 500 }
+    );
   }
+}
+
+export async function GET() {
+  const user = await getCurrentUser();
+  if (!user)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+  const domains = await prisma.domain.findMany({ orderBy: { name: "asc" } });
+  return NextResponse.json({ domains }, { status: 200 });
 }
