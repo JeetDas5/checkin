@@ -30,7 +30,15 @@ export async function POST(request) {
         { status: 401 }
       );
     }
-    const token = signToken({ id: user.id });
+
+    const payload = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      roll: user.roll,
+      role: user.role,
+    };
+    const token = signToken(payload);
     if (!token) {
       return NextResponse.json(
         { message: "Failed to generate token" },
