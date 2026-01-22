@@ -22,6 +22,13 @@ export async function POST(request) {
       );
     }
 
+    if (role && role === "ADMIN" && !domainId) {
+      return NextResponse.json(
+        { message: "Domain ID is required for ADMIN role" },
+        { status: 400 }
+      );
+    }
+
     const existingUserOrRoll = await prisma.user.findFirst({
       where: {
         OR: [{ email }, { roll }],

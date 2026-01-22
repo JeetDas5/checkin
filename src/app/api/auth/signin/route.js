@@ -50,7 +50,14 @@ export async function POST(request) {
     return NextResponse.json(
       {
         message: "Signin successful",
-        user,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          roll: user.roll,
+          role: user.role,
+          domainId: user.domainId || null,
+        },
         token,
       },
       { status: 200 }
