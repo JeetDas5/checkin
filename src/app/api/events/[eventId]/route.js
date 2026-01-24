@@ -39,7 +39,7 @@ export async function GET(request, { params }) {
       return NextResponse.json({ message: "Event not found" }, { status: 404 });
     }
 
-    return NextResponse.json(event, { status: 200 });
+    return NextResponse.json({ event }, { status: 200 });
   } catch (error) {
     console.log("Error fetching the event");
     return NextResponse.json(
