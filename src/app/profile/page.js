@@ -29,7 +29,6 @@ export default function ProfilePage() {
   });
 
   console.log("User: ", user);
-  
 
   const getInitials = (name) => {
     return (
@@ -53,8 +52,8 @@ export default function ProfilePage() {
     setIsLoading(true);
 
     try {
-      const response = await apiClient.put(`/users/${user.id}`, formData);
-      updateUser(response.data);
+      const response = await apiClient.patch(`/users/${user.id}`, formData);
+      updateUser(response.data.user);
       toast.success("Profile updated successfully!");
     } catch (error) {
       console.error("Update error:", error);

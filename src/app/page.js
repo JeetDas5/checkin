@@ -10,14 +10,15 @@ export default function Home() {
   const { isAuthenticated, user } = useAuthStore();
 
   useEffect(() => {
-    if (isAuthenticated && user) {
-      if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") {
-        router.push("/dashboard");
-      } else {
-        router.push("/attendance");
-      }
-    } else {
+    if (!isAuthenticated) {
       router.push("/login");
+    } else if (user) {
+      // Only redirect from root, not on refresh of other pages
+      if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/attendance");
+      }
     }
   }, [isAuthenticated, user, router]);
 
