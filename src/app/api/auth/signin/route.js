@@ -20,6 +20,14 @@ export async function POST(request) {
 
     const user = await prisma.user.findUnique({
       where: { email },
+      include: {
+        domain: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -57,6 +65,7 @@ export async function POST(request) {
           roll: user.roll,
           role: user.role,
           domainId: user.domainId || null,
+          domain: user.domain || null,
         },
         token,
       },

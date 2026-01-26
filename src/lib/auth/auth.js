@@ -60,6 +60,14 @@ export async function getCurrentUser() {
     }
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
+      include: {
+        domain: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
     if (!user) {
       return null;

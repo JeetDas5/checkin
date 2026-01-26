@@ -28,6 +28,9 @@ export default function ProfilePage() {
     roll: user?.roll || "",
   });
 
+  console.log("User: ", user);
+  
+
   const getInitials = (name) => {
     return (
       name
