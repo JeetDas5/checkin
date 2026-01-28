@@ -43,6 +43,7 @@ npm install
 ```
 DATABASE_URL="your_postgresql_connection_string"
 JWT_SECRET="your_jwt_secret"
+NEXT_PUBLIC_API_URL="http://localhost:3000/api"
 ```
 
 4. Run database migrations:

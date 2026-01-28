@@ -40,6 +40,7 @@ export default function RegisterPage() {
     const fetchDomains = async () => {
       try {
         const response = await apiClient.get("/domains");
+
         setDomains(response.data.domains || []);
       } catch (error) {
         console.error("Error fetching domains:", error);

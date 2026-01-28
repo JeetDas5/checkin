@@ -62,9 +62,6 @@ export async function POST(req) {
 }
 
 export async function GET() {
-  const user = await getCurrentUser();
-  if (!user)
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   const domains = await prisma.domain.findMany({ orderBy: { name: "asc" } });
   return NextResponse.json({ domains }, { status: 200 });
