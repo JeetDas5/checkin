@@ -234,8 +234,7 @@ export default function AttendancePage() {
                   const filteredRecords = attendanceRecords.filter((record) => {
                     if (user?.role === "USER") {
                       return (
-                        tab === "all" ||
-                        record.status.toLowerCase() === tab.toUpperCase()
+                        tab === "all" || record.status === tab.toUpperCase()
                       );
                     } else {
                       const now = new Date();

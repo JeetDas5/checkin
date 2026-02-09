@@ -59,6 +59,7 @@ export default function MembersPage() {
         },
       });
 
+      
       if (!response.ok) {
         if (response.status === 403) {
           router.push("/unauthorized");
@@ -66,8 +67,9 @@ export default function MembersPage() {
         }
         throw new Error("Failed to fetch members");
       }
-
+      
       const result = await response.json();
+      console.log("Members: ", result.data);
       setData(result);
     } catch (error) {
       console.error("Error fetching members:", error);

@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { signUpSchema } from "@/lib/validators/user.schema";
 import { prisma } from "@/lib/prisma";
+import { hasVerifiedOtp, deleteVerifiedOtp } from "@/lib/utils/otp";
 
 export async function POST(request) {
   try {
@@ -42,6 +43,15 @@ export async function POST(request) {
       );
     }
 
+    // Check if email has been verified with OTP
+    const isOtpVerified = await hasVerifiedOtp(email);
+    if (!isOtpVerified) {
+      return NextResponse.json(
+        { message: "Please verify your email with OTP before signing up" },
+        { status: 403 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
@@ -59,6 +69,10 @@ export async function POST(request) {
         { status: 500 }
       );
     }
+
+    // Delete the verified OTP after successful signup
+    await deleteVerifiedOtp(email);
+
     return NextResponse.json(
       {
         message: "User created successfully",

@@ -12,6 +12,11 @@ attendance-tracker/
 │   │       │   ├── signin/             POST - User login
 │   │       │   └── me/                 GET  - Get current user
 │   │       │
+│   │       ├── otp/                    [OTP Service]
+│   │       │   ├── send/               POST - Send OTP
+│   │       │   ├── verify/             POST - Verify OTP
+│   │       │   └── resend/             POST - Resend OTP
+│   │       │
 │   │       ├── domains/                [Domain Management]
 │   │       │   ├── route.js            GET  - List all domains
 │   │       │   │                       POST - Create domain (SUPER_ADMIN)
@@ -46,6 +51,13 @@ attendance-tracker/
 │   │               └── attendance/     GET    - Get user attendance stats
 │   │
 │   └── lib/
+│       ├── email/
+│       │   ├── unosend.js          Unosend integration
+│       │   └── templates/          Email templates
+│       │
+│       ├── utils/
+│       │   └── otp.js              OTP generation/verification logic
+│       │
 │       └── validators/
 │           ├── user.schema.js          User validation schemas
 │           ├── domain.schema.js        Domain validation schemas
@@ -237,6 +249,7 @@ attendance-tracker/
 - Cookie-based session management
 - Role-based access control (RBAC)
 - Domain-scoped permissions
+- **Email Verification (OTP)**
 
 ### 2. Attendance Management
 
@@ -275,7 +288,7 @@ attendance-tracker/
 
 ## Security Features
 
-1. **Authentication Required**: All endpoints except signup/signin
+1. **Authentication Required**: All endpoints except signup/signin/otp
 2. **Role-Based Access**: Granular permissions per role
 3. **Domain Isolation**: Admins can only access their domain
 4. **Self-Service Restrictions**: Users can only modify their own data
@@ -283,6 +296,8 @@ attendance-tracker/
 6. **Unique Constraints**: Prevent duplicate emails and roll numbers
 7. **Password Hashing**: Bcrypt for password storage
 8. **JWT Tokens**: Secure session management
+9. **Email Verification**: OTP required for signup
+10. **Rate Limiting**: Cooldown on OTP resend requests
 
 ## Performance Considerations
 

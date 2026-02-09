@@ -34,6 +34,8 @@ export default function Navbar() {
   const { user, logout } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  console.log("User: ", user);
+
   const handleLogout = () => {
     logout();
     router.push("/login");
@@ -57,7 +59,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
             <h1 className="text-xl font-semibold tracking-tight">
-              Attendance Tracker
+            CheckIn
             </h1>
             <div className="hidden md:flex space-x-4">
               {isAdmin && (
@@ -167,11 +169,14 @@ export default function Navbar() {
                     <p className="text-sm font-medium leading-none">
                       {user?.name}
                     </p>
-                    <p className="text-xs leading-none text-slate-500 dark:text-slate-400">
+                    <p className="text-xs leading-none text-slate-500 ">
                       {user?.email}
                     </p>
-                    <p className="text-xs leading-none text-slate-500 dark:text-slate-400 mt-1">
-                      {user?.role?.replace("_", " ")}
+                    <p className="text-xs leading-none text-slate-500">
+                      {user?.domain?.name}
+                    </p>
+                    <p className="text-xs leading-none text-slate-500 mt-1">
+                      {isAdmin && user?.role?.replace("_", " ")}
                     </p>
                   </div>
                 </DropdownMenuLabel>

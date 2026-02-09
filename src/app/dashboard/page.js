@@ -60,6 +60,7 @@ export default function DashboardPage() {
     title: "",
     date: new Date(),
   });
+  const [time, setTime] = useState("10:00");
 
   useEffect(() => {
     fetchDashboardData();
@@ -94,11 +95,29 @@ export default function DashboardPage() {
   };
 
   const handleCreateEvent = async () => {
+    if (!newEvent.title || !newEvent.date || !time) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    const [hours, minutes] = time.split(":");
+    const combinedDate = new Date(newEvent.date);
+    combinedDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+    // frontend validation
+    const now = new Date();
+    now.setSeconds(0, 0);
+    if (combinedDate < now) {
+      toast.error("Event time cannot be in the past");
+      return;
+    }
+
     try {
-      await apiClient.post("/events", newEvent);
+      await apiClient.post("/events", { ...newEvent, date: combinedDate });
       toast.success("Event created successfully!");
       setIsCreateDialogOpen(false);
       setNewEvent({ title: "", date: new Date() });
+      setTime("10:00");
       fetchDashboardData();
     } catch (error) {
       console.error("Error creating event:", error);
@@ -177,36 +196,47 @@ export default function DashboardPage() {
                         />
                       </div>
 
-                      <div className="space-y-2">
-                        <Label>Date</Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal",
-                                !newEvent.date && "text-slate-500"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {newEvent.date ? (
-                                format(newEvent.date, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0">
-                            <Calendar
-                              mode="single"
-                              selected={newEvent.date}
-                              onSelect={(date) =>
-                                setNewEvent({ ...newEvent, date })
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                      <div className="flex gap-4">
+                        <div className="space-y-2 flex-1">
+                          <Label>Date</Label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !newEvent.date && "text-slate-500"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {newEvent.date ? (
+                                  format(newEvent.date, "PPP")
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <Calendar
+                                mode="single"
+                                selected={newEvent.date}
+                                onSelect={(date) =>
+                                  setNewEvent({ ...newEvent, date })
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        <div className="space-y-2 w-32">
+                          <Label htmlFor="time">Time</Label>
+                          <Input
+                            id="time"
+                            type="time"
+                            value={time}
+                            onChange={(e) => setTime(e.target.value)}
+                          />
+                        </div>
                       </div>
                       <Button onClick={handleCreateEvent} className="w-full">
                         Create Event
@@ -232,7 +262,7 @@ export default function DashboardPage() {
                         <h3 className="font-medium">{event.title}</h3>
                         <p className="text-sm text-slate-500 dark:text-slate-400">
                           {format(new Date(event.date), "PPP")} •{" "}
-                          {event.domain?.name || "General"}
+                          {event.domain?.name || "GBM"}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">

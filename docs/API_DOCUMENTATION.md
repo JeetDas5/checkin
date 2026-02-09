@@ -1,19 +1,97 @@
 # Attendance Tracker API Documentation
 
 ## Overview
+
 This document describes all available API endpoints for the Attendance Tracker application.
 
 ## Authentication
+
 All endpoints (except signup/signin) require authentication via JWT token in cookies.
+
+---
+
+## OTP APIs
+
+### POST /api/otp/send
+
+Send OTP to user's email for verification.
+
+**Request Body:**
+
+```json
+{
+  "email": "john@example.com",
+  "name": "John Doe"
+}
+```
+
+**Response:** 200 OK
+
+```json
+{
+  "message": "OTP sent successfully to your email",
+  "expiresIn": 10
+}
+```
+
+---
+
+### POST /api/otp/verify
+
+Verify the OTP code received via email.
+
+**Request Body:**
+
+```json
+{
+  "email": "john@example.com",
+  "otp": "123456"
+}
+```
+
+**Response:** 200 OK
+
+```json
+{
+  "message": "OTP verified successfully",
+  "verified": true
+}
+```
+
+---
+
+### POST /api/otp/resend
+
+Resend OTP to user's email (rate limited to 60 seconds).
+
+**Request Body:**
+
+```json
+{
+  "email": "john@example.com",
+  "name": "John Doe"
+}
+```
+
+**Response:** 200 OK
+
+```json
+{
+  "message": "New OTP sent successfully to your email",
+  "expiresIn": 10
+}
+```
 
 ---
 
 ## Auth APIs
 
 ### POST /api/auth/signup
-Create a new user account.
+
+Create a new user account. **Requires email to be verified via OTP first.**
 
 **Request Body:**
+
 ```json
 {
   "name": "John Doe",
@@ -26,20 +104,23 @@ Create a new user account.
 ```
 
 **Response:** 201 Created
+
 ```json
 {
-  "message": "Signup successful",
+  "message": "User created successfully",
   "user": { ... },
-  "token": "jwt_token"
+  "token": "jwt_token" // Note: Token might not be returned if email verification flow handles login separately
 }
 ```
 
 ---
 
 ### POST /api/auth/signin
+
 Sign in to existing account.
 
 **Request Body:**
+
 ```json
 {
   "email": "john@example.com",
@@ -48,6 +129,7 @@ Sign in to existing account.
 ```
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "Signin successful",
@@ -59,9 +141,11 @@ Sign in to existing account.
 ---
 
 ### GET /api/auth/me
+
 Get current authenticated user details.
 
 **Response:** 200 OK
+
 ```json
 {
   "id": "user_id",
@@ -78,9 +162,11 @@ Get current authenticated user details.
 ## Domain APIs
 
 ### POST /api/domains
+
 Create a new domain (SUPER_ADMIN only).
 
 **Request Body:**
+
 ```json
 {
   "name": "Technical Domain"
@@ -88,6 +174,7 @@ Create a new domain (SUPER_ADMIN only).
 ```
 
 **Response:** 201 Created
+
 ```json
 {
   "message": "Domain created",
@@ -103,9 +190,11 @@ Create a new domain (SUPER_ADMIN only).
 ---
 
 ### GET /api/domains
+
 Get all domains.
 
 **Response:** 200 OK
+
 ```json
 {
   "domains": [
@@ -122,9 +211,11 @@ Get all domains.
 ---
 
 ### GET /api/domains/[domainId]
+
 Get specific domain with users, events, and statistics.
 
 **Response:** 200 OK
+
 ```json
 {
   "domain": {
@@ -149,9 +240,11 @@ Get specific domain with users, events, and statistics.
 ---
 
 ### DELETE /api/domains/[domainId]
+
 Delete a domain (SUPER_ADMIN only). Domain must be empty (no users or events).
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "Domain deleted successfully"
@@ -163,9 +256,11 @@ Delete a domain (SUPER_ADMIN only). Domain must be empty (no users or events).
 ## Event APIs
 
 ### POST /api/events
+
 Create a new event (ADMIN/SUPER_ADMIN only).
 
 **Request Body:**
+
 ```json
 {
   "title": "Weekly Meeting",
@@ -175,6 +270,7 @@ Create a new event (ADMIN/SUPER_ADMIN only).
 ```
 
 **Response:** 201 Created
+
 ```json
 {
   "message": "Event created successfully",
@@ -193,14 +289,17 @@ Create a new event (ADMIN/SUPER_ADMIN only).
 ---
 
 ### GET /api/events
+
 Get all events with filters.
 
 **Query Parameters:**
+
 - `domainId` - Filter by domain
 - `status` - Filter by status (OPEN/CLOSED)
 - `q` - Search by title
 
 **Response:** 200 OK
+
 ```json
 {
   "events": [
@@ -219,9 +318,11 @@ Get all events with filters.
 ---
 
 ### GET /api/events/[eventId]
+
 Get specific event details.
 
 **Response:** 200 OK
+
 ```json
 {
   "id": "event_id",
@@ -236,9 +337,11 @@ Get specific event details.
 ---
 
 ### PATCH /api/events/[eventId]
+
 Update event details (ADMIN/SUPER_ADMIN only). Cannot update closed events.
 
 **Request Body:**
+
 ```json
 {
   "title": "Updated Meeting Title",
@@ -248,6 +351,7 @@ Update event details (ADMIN/SUPER_ADMIN only). Cannot update closed events.
 ```
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "Event updated successfully",
@@ -258,9 +362,11 @@ Update event details (ADMIN/SUPER_ADMIN only). Cannot update closed events.
 ---
 
 ### POST /api/events/[eventId]/close
+
 Close an event (ADMIN/SUPER_ADMIN only).
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "Event closed successfully",
@@ -271,9 +377,11 @@ Close an event (ADMIN/SUPER_ADMIN only).
 ---
 
 ### POST /api/events/[eventId]/open
+
 Reopen a closed event (ADMIN/SUPER_ADMIN only).
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "Event reopened successfully",
@@ -284,9 +392,11 @@ Reopen a closed event (ADMIN/SUPER_ADMIN only).
 ---
 
 ### GET /api/events/[eventId]/attendance
+
 Get all attendance records for an event with statistics.
 
 **Response:** 200 OK
+
 ```json
 {
   "event": {
@@ -319,9 +429,11 @@ Get all attendance records for an event with statistics.
 ## Attendance APIs
 
 ### POST /api/attendance
+
 Mark attendance (single or bulk) (ADMIN/SUPER_ADMIN only).
 
 **Single Attendance Request:**
+
 ```json
 {
   "eventId": "event_id",
@@ -331,6 +443,7 @@ Mark attendance (single or bulk) (ADMIN/SUPER_ADMIN only).
 ```
 
 **Bulk Attendance Request:**
+
 ```json
 {
   "eventId": "event_id",
@@ -348,6 +461,7 @@ Mark attendance (single or bulk) (ADMIN/SUPER_ADMIN only).
 ```
 
 **Response:** 201 Created
+
 ```json
 {
   "message": "Attendance marked successfully",
@@ -358,9 +472,11 @@ Mark attendance (single or bulk) (ADMIN/SUPER_ADMIN only).
 ---
 
 ### GET /api/attendance
+
 Get attendance records with filters.
 
 **Query Parameters:**
+
 - `eventId` - Filter by event
 - `userId` - Filter by user (ADMIN/SUPER_ADMIN only)
 - `status` - Filter by status
@@ -368,6 +484,7 @@ Get attendance records with filters.
 **Note:** Regular users can only see their own attendance.
 
 **Response:** 200 OK
+
 ```json
 {
   "attendances": [
@@ -387,9 +504,11 @@ Get attendance records with filters.
 ---
 
 ### GET /api/attendance/[attendanceId]
+
 Get specific attendance record.
 
 **Response:** 200 OK
+
 ```json
 {
   "id": "attendance_id",
@@ -403,9 +522,11 @@ Get specific attendance record.
 ---
 
 ### PATCH /api/attendance/[attendanceId]
+
 Update attendance status (ADMIN/SUPER_ADMIN only). Cannot update for closed events.
 
 **Request Body:**
+
 ```json
 {
   "status": "EXCUSED"
@@ -413,6 +534,7 @@ Update attendance status (ADMIN/SUPER_ADMIN only). Cannot update for closed even
 ```
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "Attendance updated successfully",
@@ -423,9 +545,11 @@ Update attendance status (ADMIN/SUPER_ADMIN only). Cannot update for closed even
 ---
 
 ### DELETE /api/attendance/[attendanceId]
+
 Delete attendance record (ADMIN/SUPER_ADMIN only). Cannot delete for closed events.
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "Attendance record deleted successfully"
@@ -437,19 +561,23 @@ Delete attendance record (ADMIN/SUPER_ADMIN only). Cannot delete for closed even
 ## User APIs
 
 ### GET /api/users
+
 Get all users with filters.
 
 **Query Parameters:**
+
 - `domainId` - Filter by domain
 - `role` - Filter by role (SUPER_ADMIN, ADMIN, USER)
 - `q` - Search by name, email, or roll
 
-**Note:** 
+**Note:**
+
 - Regular users can only see users from their domain
 - Admins can only see users from their domain
 - Super admins can see all users
 
 **Response:** 200 OK
+
 ```json
 {
   "users": [
@@ -472,9 +600,11 @@ Get all users with filters.
 ---
 
 ### GET /api/users/[userId]
+
 Get specific user details.
 
 **Response:** 200 OK
+
 ```json
 {
   "id": "user_id",
@@ -493,14 +623,17 @@ Get specific user details.
 ---
 
 ### PATCH /api/users/[userId]
+
 Update user details.
 
 **Permissions:**
+
 - Users can update their own profile (except role and domainId)
 - Admins can update users in their domain (except role)
 - Super admins can update any user including role and domainId
 
 **Request Body:**
+
 ```json
 {
   "name": "Updated Name",
@@ -513,6 +646,7 @@ Update user details.
 ```
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "User updated successfully",
@@ -523,9 +657,11 @@ Update user details.
 ---
 
 ### DELETE /api/users/[userId]
+
 Delete a user (SUPER_ADMIN only). Cannot delete yourself.
 
 **Response:** 200 OK
+
 ```json
 {
   "message": "User deleted successfully"
@@ -535,9 +671,11 @@ Delete a user (SUPER_ADMIN only). Cannot delete yourself.
 ---
 
 ### GET /api/users/[userId]/attendance
+
 Get attendance statistics and history for a user.
 
 **Response:** 200 OK
+
 ```json
 {
   "user": { ... },
@@ -564,13 +702,16 @@ Get attendance statistics and history for a user.
 ## Role-Based Access Control
 
 ### Roles:
+
 1. **SUPER_ADMIN** (Presidents/Vice Presidents)
+
    - Full access to all features
    - Can create/delete domains
    - Can manage all users and change roles
    - Can view/manage all events and attendance
 
 2. **ADMIN** (Domain Leads)
+
    - Can create/manage events for their domain
    - Can mark/update attendance for their domain
    - Can view users in their domain
@@ -588,6 +729,7 @@ Get attendance statistics and history for a user.
 All endpoints may return the following error responses:
 
 **401 Unauthorized**
+
 ```json
 {
   "message": "Unauthorized"
@@ -595,6 +737,7 @@ All endpoints may return the following error responses:
 ```
 
 **403 Forbidden**
+
 ```json
 {
   "message": "Forbidden"
@@ -602,6 +745,7 @@ All endpoints may return the following error responses:
 ```
 
 **404 Not Found**
+
 ```json
 {
   "message": "Resource not found"
@@ -609,6 +753,7 @@ All endpoints may return the following error responses:
 ```
 
 **400 Bad Request**
+
 ```json
 {
   "message": "Validation error",
@@ -617,6 +762,7 @@ All endpoints may return the following error responses:
 ```
 
 **500 Internal Server Error**
+
 ```json
 {
   "message": "Server error"

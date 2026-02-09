@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,8 @@ import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
   const { login, isAuthenticated, user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,13 +31,15 @@ export default function LoginPage() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
-      if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") {
+      if (from) {
+        router.push(from);
+      } else if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") {
         router.push("/dashboard");
       } else {
         router.push("/attendance");
       }
     }
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, user, router, from]);
 
   const handleChange = (e) => {
     setFormData({
@@ -58,7 +62,9 @@ export default function LoginPage() {
       toast.success("Login successful!");
 
       // Redirect based on role
-      if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") {
+      if (from) {
+        router.push(from);
+      } else if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") {
         router.push("/dashboard");
       } else {
         router.push("/attendance");

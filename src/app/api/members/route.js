@@ -71,6 +71,9 @@ export async function GET(request) {
       const members = await prisma.user.findMany({
         where: {
           domainId: currentUser.domainId,
+          role: {
+            not: "SUPER_ADMIN",
+          },
         },
         select: {
           id: true,

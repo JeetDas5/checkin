@@ -1,4 +1,4 @@
-# Attendance Tracker
+# CheckIn
 
 A comprehensive attendance tracking system built with Next.js, Prisma, and PostgreSQL. This application provides role-based access control for managing events, users, and attendance records across different domains.
 
@@ -11,6 +11,7 @@ A comprehensive attendance tracking system built with Next.js, Prisma, and Postg
 - Attendance statistics and reports
 - User management with domain assignment
 - Comprehensive API with authentication
+- Email Verification with OTP
 
 ## Tech Stack
 
@@ -19,6 +20,7 @@ A comprehensive attendance tracking system built with Next.js, Prisma, and Postg
 - **ORM**: Prisma
 - **Authentication**: JWT with bcrypt
 - **Validation**: Zod
+- **Emails**: Unosend
 
 ## Getting Started
 
@@ -44,6 +46,7 @@ npm install
 DATABASE_URL="your_postgresql_connection_string"
 JWT_SECRET="your_jwt_secret"
 NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+UNOSEND_API_KEY="your-unosend-api-key"
 ```
 
 4. Run database migrations:
@@ -70,11 +73,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 Complete API documentation is available in the `docs` folder:
 
-- **[API Complete Overview](docs/API_COMPLETE_README.md)** - Start here for a complete overview
 - **[API Documentation](docs/API_DOCUMENTATION.md)** - Detailed API reference with examples
-- **[API Testing Guide](docs/API_TESTING_GUIDE.md)** - Step-by-step testing instructions
 - **[API Architecture](docs/API_ARCHITECTURE.md)** - System architecture and design patterns
-- **[Implementation Summary](docs/API_IMPLEMENTATION_SUMMARY.md)** - Summary of implemented features
+- **[OTP Verification](docs/OTP_VERIFICATION.md)** - Detailed guide on the OTP system
 
 ## Project Structure
 
@@ -84,6 +85,7 @@ attendance-tracker/
 │   ├── app/
 │   │   ├── api/              # API routes
 │   │   │   ├── auth/         # Authentication endpoints
+│   │   │   ├── otp/          # OTP endpoints
 │   │   │   ├── domains/      # Domain management
 │   │   │   ├── events/       # Event management
 │   │   │   ├── attendance/   # Attendance tracking
@@ -92,7 +94,9 @@ attendance-tracker/
 │   ├── components/           # React components
 │   ├── lib/                  # Utilities and helpers
 │   │   ├── auth/            # Authentication utilities
+│   │   ├── email/           # Email service (Unosend)
 │   │   ├── validators/      # Zod validation schemas
+│   │   ├── utils/           # General utilities (including OTP)
 │   │   └── prisma.js        # Prisma client
 │   └── generated/           # Generated Prisma client
 ├── prisma/
@@ -119,6 +123,12 @@ See `prisma/schema.prisma` for the complete schema.
 - `POST /api/auth/signup` - Register new user
 - `POST /api/auth/signin` - User login
 - `GET /api/auth/me` - Get current user
+
+### OTP Verification
+
+- `POST /api/otp/send` - Send verification OTP
+- `POST /api/otp/verify` - Verify OTP code
+- `POST /api/otp/resend` - Resend OTP code
 
 ### Domains
 
@@ -155,20 +165,6 @@ See `prisma/schema.prisma` for the complete schema.
 
 For detailed API documentation, see [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md)
 
-## Development Team
+Lead Developer: [JeetDas](https://github.com/JeetDas5)
 
-- Rehan
-- Satwik
-- Rohit
-
-## License
-
-This project is developed for Konnexions.
-
-## Learn More
-
-To learn more about the technologies used:
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Prisma Documentation](https://www.prisma.io/docs)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs)
+Built with ❤️ for Konnexions

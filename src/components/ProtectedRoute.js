@@ -1,24 +1,25 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import useAuthStore from "@/store/authStore";
 import { Loader2 } from "lucide-react";
 
 export default function ProtectedRoute({ children, allowedRoles = [] }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated, user } = useAuthStore();
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push(`/login?from=${encodeURIComponent(pathname)}`);
       return;
     }
 
     if (allowedRoles.length > 0 && user && !allowedRoles.includes(user.role)) {
       router.push("/unauthorized");
     }
-  }, [isAuthenticated, user, allowedRoles, router]);
+  }, [isAuthenticated, user, allowedRoles, router, pathname]);
 
   if (!isAuthenticated) {
     return (
