@@ -1,19 +1,8 @@
-/**
- * OTP Utility Functions
- * Handles OTP generation, validation, and management
- */
-
 import { prisma } from "../prisma";
 
 const OTP_LENGTH = 6;
 const OTP_EXPIRY_MINUTES = 10;
-const MAX_OTP_ATTEMPTS = 5;
 
-/**
- * Generate a random numeric OTP
- * @param {number} length - Length of OTP (default: 6)
- * @returns {string} Generated OTP
- */
 export function generateOtp(length = OTP_LENGTH) {
   const digits = "0123456789";
   let otp = "";
@@ -25,11 +14,6 @@ export function generateOtp(length = OTP_LENGTH) {
   return otp;
 }
 
-/**
- * Create and store OTP in database
- * @param {string} email - User's email
- * @returns {Promise<Object>} Created OTP record
- */
 export async function createOtp(email) {
   // Delete any existing unverified OTPs for this email
   await prisma.otp.deleteMany({
@@ -54,14 +38,7 @@ export async function createOtp(email) {
   return otpRecord;
 }
 
-/**
- * Verify OTP for an email
- * @param {string} email - User's email
- * @param {string} otp - OTP to verify
- * @returns {Promise<Object>} Verification result
- */
 export async function verifyOtp(email, otp) {
-  // Find the most recent OTP for this email
   const otpRecord = await prisma.otp.findFirst({
     where: {
       email,
@@ -104,11 +81,6 @@ export async function verifyOtp(email, otp) {
   };
 }
 
-/**
- * Check if email has a verified OTP
- * @param {string} email - User's email
- * @returns {Promise<boolean>} True if email has verified OTP
- */
 export async function hasVerifiedOtp(email) {
   const verifiedOtp = await prisma.otp.findFirst({
     where: {
@@ -123,11 +95,6 @@ export async function hasVerifiedOtp(email) {
   return !!verifiedOtp;
 }
 
-/**
- * Delete verified OTP after successful signup
- * @param {string} email - User's email
- * @returns {Promise<void>}
- */
 export async function deleteVerifiedOtp(email) {
   await prisma.otp.deleteMany({
     where: {
@@ -137,10 +104,6 @@ export async function deleteVerifiedOtp(email) {
   });
 }
 
-/**
- * Clean up expired OTPs (can be run as a cron job)
- * @returns {Promise<number>} Number of deleted records
- */
 export async function cleanupExpiredOtps() {
   const result = await prisma.otp.deleteMany({
     where: {

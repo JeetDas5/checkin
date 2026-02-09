@@ -10,7 +10,7 @@ export async function POST(request) {
     const parsedBody = signUpSchema.safeParse(body);
     if (!parsedBody.success) {
       return NextResponse.json(
-        { message: "Invalid request data", errors: parsedBody.error.errors },
+        { message: "Invalid request data", errors: parsedBody.error },
         { status: 400 }
       );
     }

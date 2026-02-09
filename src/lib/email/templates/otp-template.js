@@ -14,7 +14,7 @@ export function generateOtpEmailHtml(otp, name) {
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #34d399 0%, #059669 100%);
       padding: 40px 20px;
       line-height: 1.6;
     }
@@ -27,7 +27,7 @@ export function generateOtpEmailHtml(otp, name) {
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #34d399 0%, #059669 100%);
       padding: 40px 30px;
       text-align: center;
       color: #ffffff;
@@ -78,33 +78,15 @@ export function generateOtpEmailHtml(otp, name) {
     .otp-code {
       font-size: 42px;
       font-weight: 700;
-      color: #667eea;
+      color: #059669;
       letter-spacing: 8px;
       font-family: 'Courier New', monospace;
       margin: 10px 0 20px 0;
-      text-shadow: 2px 2px 4px rgba(102, 126, 234, 0.1);
+      text-shadow: 2px 2px 4px rgba(5, 150, 105, 0.1);
       user-select: all;
       -webkit-user-select: all;
     }
-    .copy-btn {
-        background-color: #667eea;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        text-decoration: none;
-        display: inline-block;
-    }
-    .copy-btn:hover {
-        background-color: #5a67d8;
-    }
-    .copy-btn:active {
-        background-color: #4c51bf;
-    }
+
     .expiry-notice {
       font-size: 13px;
       color: #ef4444;
@@ -136,7 +118,7 @@ export function generateOtpEmailHtml(otp, name) {
     }
     .footer .brand {
       font-weight: 600;
-      color: #667eea;
+      color: #059669;
       font-size: 14px;
       margin-top: 12px;
     }
@@ -164,26 +146,7 @@ export function generateOtpEmailHtml(otp, name) {
       }
     }
   </style>
-  <script>
-    function copyOtp() {
-      const otp = "${otp}";
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(otp).then(function() {
-          const btn = document.getElementById('copyBtn');
-          const originalText = btn.innerText;
-          btn.innerText = 'Copied!';
-          setTimeout(function() {
-            btn.innerText = originalText;
-          }, 2000);
-        }).catch(function(err) {
-          console.error('Could not copy text: ', err);
-        });
-      } else {
-        // Fallback for environments where clipboard API is not available
-        console.warn('Clipboard API not available');
-      }
-    }
-  </script>
+
 </head>
 <body>
   <div class="container">
@@ -205,11 +168,7 @@ export function generateOtpEmailHtml(otp, name) {
         <!-- Added ID for potential selection -->
         <div class="otp-code" id="otpCode">${otp}</div>
         
-        <!-- Copy Button -->
-        <!-- Note: JavaScript buttons often don't work in email clients, but we include it for web views -->
-        <button id="copyBtn" class="copy-btn" onclick="copyOtp()">
-          Copy Code
-        </button>
+
 
         <div class="expiry-notice">⏰ This code expires in 10 minutes</div>
       </div>
