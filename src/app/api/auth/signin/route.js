@@ -30,9 +30,16 @@ export async function POST(request) {
       },
     });
 
+    if (!user) {
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404 }
+      );
+    }
+
     const isValidPassword = await bcrypt.compare(password, user.password);
 
-    if (!user || !isValidPassword) {
+    if (!isValidPassword) {
       return NextResponse.json(
         { message: "Invalid email or password" },
         { status: 401 }
