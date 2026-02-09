@@ -17,7 +17,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useAuthStore from "@/store/authStore";
 import apiClient from "@/lib/api";
 import { toast } from "sonner";
-import { Loader2, User } from "lucide-react";
+import { User } from "lucide-react";
+import { Loader } from "@/components/ui/loader";
 
 export default function ProfilePage() {
   const { user, updateUser } = useAuthStore();
@@ -109,7 +110,7 @@ export default function ProfilePage() {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    disabled={isLoading}
+                    disabled
                   />
                 </div>
                 <div className="space-y-2">
@@ -120,7 +121,7 @@ export default function ProfilePage() {
                     type="text"
                     value={formData.roll}
                     onChange={handleChange}
-                    disabled={isLoading}
+                    disabled
                   />
                 </div>
                 <div className="space-y-2">
@@ -134,7 +135,7 @@ export default function ProfilePage() {
                 <Button type="submit" disabled={isLoading}>
                   {isLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader className="mr-2" size="sm" />
                       Updating...
                     </>
                   ) : (

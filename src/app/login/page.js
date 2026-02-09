@@ -15,9 +15,10 @@ import {
 import useAuthStore from "@/store/authStore";
 import apiClient from "@/lib/api";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Suspense } from "react";
+import { Loader } from "@/components/ui/loader";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
@@ -125,7 +126,7 @@ export default function LoginPage() {
             <Button type="submit" className="w-full h-10" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader className="mr-2" size="sm" />
                   Signing in...
                 </>
               ) : (
@@ -145,5 +146,19 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader size="lg" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

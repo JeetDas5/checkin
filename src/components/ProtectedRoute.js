@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import useAuthStore from "@/store/authStore";
-import { Loader2 } from "lucide-react";
+import { Loader } from "@/components/ui/loader";
 
 export default function ProtectedRoute({ children, allowedRoles = [] }) {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function ProtectedRoute({ children, allowedRoles = [] }) {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+        <Loader size="lg" />
       </div>
     );
   }
@@ -32,7 +32,7 @@ export default function ProtectedRoute({ children, allowedRoles = [] }) {
   if (allowedRoles.length > 0 && user && !allowedRoles.includes(user.role)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+        <Loader size="lg" />
       </div>
     );
   }

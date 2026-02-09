@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import apiClient from "@/lib/api";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader } from "@/components/ui/loader";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -250,7 +250,7 @@ export default function RegisterPage() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader className="mr-2" size="sm" />
                     Sending OTP...
                   </>
                 ) : (
@@ -292,7 +292,7 @@ export default function RegisterPage() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader className="mr-2" size="sm" />
                     Verifying...
                   </>
                 ) : (
