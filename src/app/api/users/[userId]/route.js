@@ -111,10 +111,21 @@ export async function PATCH(request, { params }) {
     // Restrict what can be updated based on role
     if (!isSuperAdmin) {
       delete data.role; // Only SUPER_ADMIN can change roles
+    } else {
+      // If SUPER_ADMIN updates role to SUPER_ADMIN, ensure domainId is null
+      if (data.role === "SUPER_ADMIN") {
+        data.domainId = null;
+      }
     }
 
     if (!isSuperAdmin && !isAdmin) {
       delete data.domainId; // Only SUPER_ADMIN and ADMIN can change domains
+    }
+
+    // Ensure SUPER_ADMIN always has null domainId
+    const effectiveRole = data.role || existingUser.role;
+    if (effectiveRole === "SUPER_ADMIN") {
+      data.domainId = null;
     }
 
     // Check for unique constraints

@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import useAuthStore from "@/store/authStore";
 import { Loader } from "@/components/ui/loader";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function ProtectedRoute({ children, allowedRoles = [] }) {
   const router = useRouter();
