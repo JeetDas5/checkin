@@ -73,15 +73,10 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (!formData.email.endsWith("@kiit.ac.in")) {
-    //   toast.error("KIIT Email must end with @kiit.ac.in");
-    //   return;
-    // }
-
-    // if (formData.personalEmail.endsWith("@kiit.ac.in")) {
-    //   toast.error("Please provide a non-KIIT personal email for verification.");
-    //   return;
-    // }
+    if (!formData.email.endsWith("@kiit.ac.in")) {
+      toast.error("KIIT Email must end with @kiit.ac.in");
+      return;
+    }
 
     if (formData.password.length < 6) {
       toast.error("Password must be at least 6 characters");
@@ -197,7 +192,7 @@ export default function RegisterPage() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="you@kiit.ac.in"
+                  placeholder="123456@kiit.ac.in"
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -207,13 +202,13 @@ export default function RegisterPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="personalEmail" className="text-sm font-medium">
-                  Personal Email (for OTP)
+                  Personal Email
                 </Label>
                 <Input
                   id="personalEmail"
                   name="personalEmail"
                   type="email"
-                  placeholder="personal@example.com"
+                  placeholder="personal@gmail.com"
                   value={formData.personalEmail}
                   onChange={handleChange}
                   required

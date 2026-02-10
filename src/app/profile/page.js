@@ -120,7 +120,8 @@ export default function ProfilePage() {
                     name="personalEmail"
                     type="email"
                     value={user?.personalEmail}
-                    disabled
+                    disabled={isLoading}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className="space-y-2">
