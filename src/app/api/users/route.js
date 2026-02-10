@@ -38,6 +38,7 @@ export async function GET(request) {
       where.OR = [
         { name: { contains: q, mode: "insensitive" } },
         { email: { contains: q, mode: "insensitive" } },
+        { personalEmail: { contains: q, mode: "insensitive" } },
         { roll: { contains: q, mode: "insensitive" } },
       ];
     }
@@ -48,6 +49,7 @@ export async function GET(request) {
         id: true,
         name: true,
         email: true,
+        personalEmail: true,
         roll: true,
         role: true,
         profile_pic: true,

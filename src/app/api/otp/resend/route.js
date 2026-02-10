@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createOtp } from "@/lib/utils/otp";
-import { sendOtpEmail } from "@/lib/email/unosend";
+import { sendOtpEmail } from "@/lib/email/resend";
 import { prisma } from "@/lib/prisma";
 
 /**

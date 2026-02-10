@@ -34,6 +34,7 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    personalEmail: "",
     password: "",
     roll: "",
     domainId: "",
@@ -72,20 +73,30 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email.endsWith("@kiit.ac.in")) {
-      toast.error("Only @kiit.ac.in email addresses are allowed.");
+    // if (!formData.email.endsWith("@kiit.ac.in")) {
+    //   toast.error("KIIT Email must end with @kiit.ac.in");
+    //   return;
+    // }
+
+    // if (formData.personalEmail.endsWith("@kiit.ac.in")) {
+    //   toast.error("Please provide a non-KIIT personal email for verification.");
+    //   return;
+    // }
+
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Send OTP to email
+      // Send OTP to KIIT email
       await apiClient.post("/otp/send", {
         email: formData.email,
         name: formData.name,
       });
-      toast.success("OTP sent to your email!");
+      toast.success("OTP sent to your KIIT email!");
       setOtpSent(true);
       setStep(2);
       setResendTimer(60); // 60 seconds cooldown
@@ -105,7 +116,7 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     try {
-      // Verify OTP
+      // Verify OTP with KIIT email
       await apiClient.post("/otp/verify", {
         email: formData.email,
         otp,
@@ -135,7 +146,7 @@ export default function RegisterPage() {
         email: formData.email,
         name: formData.name,
       });
-      toast.success("New OTP sent to your email!");
+      toast.success("New OTP sent to your KIIT email!");
       setResendTimer(60);
       setOtp("");
     } catch (error) {
@@ -156,7 +167,7 @@ export default function RegisterPage() {
           <CardDescription className="text-slate-500 dark:text-slate-400">
             {step === 1
               ? "Enter your details to get started"
-              : `We've sent a 6-digit code to ${formData.email}`}
+              : `We've sent a 6-digit code to your KIIT email: ${formData.email}`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -180,14 +191,30 @@ export default function RegisterPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Email
+                  KIIT Email
                 </Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="you@kiit.ac.in"
                   value={formData.email}
+                  onChange={handleChange}
+                  required
+                  disabled={isLoading}
+                  className="h-10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="personalEmail" className="text-sm font-medium">
+                  Personal Email (for OTP)
+                </Label>
+                <Input
+                  id="personalEmail"
+                  name="personalEmail"
+                  type="email"
+                  placeholder="personal@example.com"
+                  value={formData.personalEmail}
                   onChange={handleChange}
                   required
                   disabled={isLoading}

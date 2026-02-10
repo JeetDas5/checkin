@@ -43,13 +43,14 @@ model Domain {
 }
 
 model User {
-  id          String  @id @default(cuid())
-  name        String
-  email       String  @unique
-  password    String
-  roll        String  @unique
-  role        Role    @default(USER)
-  profile_pic String?
+  id            String  @id @default(cuid())
+  name          String
+  email         String  @unique
+  personalEmail String  @unique
+  password      String
+  roll          String  @unique
+  role          Role    @default(USER)
+  profile_pic   String?
 
   // Admin/User belongs to a domain (Super-admin can be null)
   domainId String?

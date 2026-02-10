@@ -14,11 +14,12 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-    const { name, email, roll, password, role, domainId } = parsedBody.data;
+    const { name, email, personalEmail, roll, password, role, domainId } =
+      parsedBody.data;
 
-    if (!name || !email || !roll || !password) {
+    if (!name || !email || !personalEmail || !roll || !password) {
       return NextResponse.json(
-        { message: "Name, email, roll, and password are required" },
+        { message: "Name, emails, roll, and password are required" },
         { status: 400 }
       );
     }
@@ -32,22 +33,30 @@ export async function POST(request) {
 
     const existingUserOrRoll = await prisma.user.findFirst({
       where: {
-        OR: [{ email }, { roll }],
+        OR: [{ email }, { roll }, { personalEmail }],
       },
     });
 
     if (existingUserOrRoll) {
+      let conflictField = "Email or Roll";
+      if (existingUserOrRoll.personalEmail === personalEmail)
+        conflictField = "Personal Email";
+      else if (existingUserOrRoll.email === email) conflictField = "KIIT Email";
+      else if (existingUserOrRoll.roll === roll) conflictField = "Roll Number";
+
       return NextResponse.json(
-        { message: "Email or Roll already exists" },
+        { message: `${conflictField} already exists` },
         { status: 409 }
       );
     }
 
-    // Check if email has been verified with OTP
+    // Check if KIIT email has been verified with OTP
     const isOtpVerified = await hasVerifiedOtp(email);
     if (!isOtpVerified) {
       return NextResponse.json(
-        { message: "Please verify your email with OTP before signing up" },
+        {
+          message: "Please verify your KIIT email with OTP before signing up",
+        },
         { status: 403 }
       );
     }
@@ -57,6 +66,7 @@ export async function POST(request) {
       data: {
         name,
         email,
+        personalEmail,
         roll,
         password: hashedPassword,
         role: role || "USER",

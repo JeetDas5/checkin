@@ -103,13 +103,23 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">KIIT Email</Label>
                   <Input
                     id="email"
                     name="email"
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="personalEmail">Personal Email</Label>
+                  <Input
+                    id="personalEmail"
+                    name="personalEmail"
+                    type="email"
+                    value={user?.personalEmail}
                     disabled
                   />
                 </div>

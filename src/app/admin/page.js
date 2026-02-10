@@ -144,6 +144,7 @@ export default function AdminPanel() {
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.personalEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.roll.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -342,7 +343,7 @@ export default function AdminPanel() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <label className="text-sm font-medium leading-none text-muted-foreground">
-                      Email
+                      KIIT Email
                     </label>
                     <div className="h-10 px-3 py-2 rounded-md border bg-muted/50 text-sm text-muted-foreground flex items-center overflow-hidden text-ellipsis whitespace-nowrap select-none cursor-not-allowed">
                       {editingUser?.email}
@@ -350,11 +351,20 @@ export default function AdminPanel() {
                   </div>
                   <div className="grid gap-2">
                     <label className="text-sm font-medium leading-none text-muted-foreground">
-                      Roll No.
+                      Personal Email
                     </label>
-                    <div className="h-10 px-3 py-2 rounded-md border bg-muted/50 text-sm text-muted-foreground flex items-center select-none cursor-not-allowed">
-                      {editingUser?.roll}
+                    <div className="h-10 px-3 py-2 rounded-md border bg-muted/50 text-sm text-muted-foreground flex items-center overflow-hidden text-ellipsis whitespace-nowrap select-none cursor-not-allowed">
+                      {editingUser?.personalEmail || "N/A"}
                     </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium leading-none text-muted-foreground">
+                    Roll No.
+                  </label>
+                  <div className="h-10 px-3 py-2 rounded-md border bg-muted/50 text-sm text-muted-foreground flex items-center select-none cursor-not-allowed">
+                    {editingUser?.roll}
                   </div>
                 </div>
 

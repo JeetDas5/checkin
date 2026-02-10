@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createOtp } from "@/lib/utils/otp";
-import { sendOtpEmail } from "@/lib/email/unosend";
+import { sendOtpEmail } from "@/lib/email/resend";
 import { prisma } from "@/lib/prisma";
 
 /**
@@ -28,14 +28,16 @@ export async function POST(request) {
       );
     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
+    // Check if user already exists with this email (either as KIIT or personal email)
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { personalEmail: email }],
+      },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "Email already registered" },
+        { message: "This email is already registered" },
         { status: 409 }
       );
     }

@@ -31,10 +31,7 @@ export async function POST(request) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -69,6 +66,7 @@ export async function POST(request) {
           id: user.id,
           name: user.name,
           email: user.email,
+          personalEmail: user.personalEmail,
           roll: user.roll,
           role: user.role,
           domainId: user.domainId || null,
