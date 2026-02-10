@@ -71,6 +71,12 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.email.endsWith("@kiit.ac.in")) {
+      toast.error("Only @kiit.ac.in email addresses are allowed.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
