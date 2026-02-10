@@ -45,6 +45,7 @@ import {
   Calendar as CalendarIconLucide,
   TrendingUp,
 } from "lucide-react";
+import { Loader } from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
@@ -61,6 +62,7 @@ export default function DashboardPage() {
     date: new Date(),
   });
   const [time, setTime] = useState("10:00");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardData();
@@ -68,6 +70,7 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
+      setLoading(true);
       const [eventsRes, domainsRes] = await Promise.all([
         apiClient.get("/events"),
         apiClient.get("/domains"),
@@ -91,6 +94,8 @@ export default function DashboardPage() {
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
       toast.error("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,166 +135,184 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <Navbar />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <Card className="border-slate-200 dark:border-slate-800">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Events
-                </CardTitle>
-                <CalendarIconLucide className="h-4 w-4 text-slate-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalEvents}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-slate-200 dark:border-slate-800">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Upcoming Events
-                </CardTitle>
-                <TrendingUp className="h-4 w-4 text-slate-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.upcomingEvents}</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Events Section */}
-          <Card className="border-slate-200 dark:border-slate-800">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Events</CardTitle>
-                  <CardDescription>
-                    Manage your attendance events
-                  </CardDescription>
-                </div>
-                <Dialog
-                  open={isCreateDialogOpen}
-                  onOpenChange={setIsCreateDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button size="sm">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Create Event
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create New Event</DialogTitle>
-                      <DialogDescription>
-                        Add a new attendance event
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="title">Event Title</Label>
-                        <Input
-                          id="title"
-                          placeholder="Weekly Meeting"
-                          value={newEvent.title}
-                          onChange={(e) =>
-                            setNewEvent({ ...newEvent, title: e.target.value })
-                          }
-                        />
-                      </div>
-
-                      <div className="flex gap-4">
-                        <div className="space-y-2 flex-1">
-                          <Label>Date</Label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "w-full justify-start text-left font-normal",
-                                  !newEvent.date && "text-slate-500"
-                                )}
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {newEvent.date ? (
-                                  format(newEvent.date, "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                              <Calendar
-                                mode="single"
-                                selected={newEvent.date}
-                                onSelect={(date) =>
-                                  setNewEvent({ ...newEvent, date })
-                                }
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                        <div className="space-y-2 w-32">
-                          <Label htmlFor="time">Time</Label>
-                          <Input
-                            id="time"
-                            type="time"
-                            value={time}
-                            onChange={(e) => setTime(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <Button onClick={handleCreateEvent} className="w-full">
-                        Create Event
-                      </Button>
+          {loading ? (
+            <div className="flex h-[50vh] w-full items-center justify-center">
+              <Loader size="xl" text="Loading dashboard..." />
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <Card className="border-slate-200 dark:border-slate-800">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Total Events
+                    </CardTitle>
+                    <CalendarIconLucide className="h-4 w-4 text-slate-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {stats.totalEvents}
                     </div>
-                  </DialogContent>
-                </Dialog>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-slate-200 dark:border-slate-800">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Upcoming Events
+                    </CardTitle>
+                    <TrendingUp className="h-4 w-4 text-slate-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {stats.upcomingEvents}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {events.length === 0 ? (
-                  <p className="text-center text-slate-500 dark:text-slate-400 py-8">
-                    No events yet. Create your first event!
-                  </p>
-                ) : (
-                  events.map((event) => (
-                    <div
-                      key={event.id}
-                      className="flex items-center justify-between p-4 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+
+              {/* Events Section */}
+              <Card className="border-slate-200 dark:border-slate-800">
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Events</CardTitle>
+                      <CardDescription>
+                        Manage your attendance events
+                      </CardDescription>
+                    </div>
+                    <Dialog
+                      open={isCreateDialogOpen}
+                      onOpenChange={setIsCreateDialogOpen}
                     >
-                      <div>
-                        <h3 className="font-medium">{event.title}</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          {format(new Date(event.date), "PPP")} •{" "}
-                          {event.domain?.name || "GBM"}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span
-                          className={cn(
-                            "px-2 py-1 text-xs font-medium rounded-full",
-                            event.status === "OPEN"
-                              ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                              : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                          )}
-                        >
-                          {event.status}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => router.push(`/events/${event.id}`)}
-                        >
-                          View
+                      <DialogTrigger asChild>
+                        <Button size="sm">
+                          <Plus className="mr-2 h-4 w-4" />
+                          Create Event
                         </Button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Create New Event</DialogTitle>
+                          <DialogDescription>
+                            Add a new attendance event
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="title">Event Title</Label>
+                            <Input
+                              id="title"
+                              placeholder="Weekly Meeting"
+                              value={newEvent.title}
+                              onChange={(e) =>
+                                setNewEvent({
+                                  ...newEvent,
+                                  title: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+
+                          <div className="flex gap-4">
+                            <div className="space-y-2 flex-1">
+                              <Label>Date</Label>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    className={cn(
+                                      "w-full justify-start text-left font-normal",
+                                      !newEvent.date && "text-slate-500"
+                                    )}
+                                  >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {newEvent.date ? (
+                                      format(newEvent.date, "PPP")
+                                    ) : (
+                                      <span>Pick a date</span>
+                                    )}
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                  <Calendar
+                                    mode="single"
+                                    selected={newEvent.date}
+                                    onSelect={(date) =>
+                                      setNewEvent({ ...newEvent, date })
+                                    }
+                                    initialFocus
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                            <div className="space-y-2 w-32">
+                              <Label htmlFor="time">Time</Label>
+                              <Input
+                                id="time"
+                                type="time"
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                              />
+                            </div>
+                          </div>
+                          <Button
+                            onClick={handleCreateEvent}
+                            className="w-full"
+                          >
+                            Create Event
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {events.length === 0 ? (
+                      <p className="text-center text-slate-500 dark:text-slate-400 py-8">
+                        No events yet. Create your first event!
+                      </p>
+                    ) : (
+                      events.map((event) => (
+                        <div
+                          key={event.id}
+                          className="flex items-center justify-between p-4 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+                        >
+                          <div>
+                            <h3 className="font-medium">{event.title}</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                              {format(new Date(event.date), "PPP")} •{" "}
+                              {event.domain?.name || "GBM"}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span
+                              className={cn(
+                                "px-2 py-1 text-xs font-medium rounded-full",
+                                event.status === "OPEN"
+                                  ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                                  : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                              )}
+                            >
+                              {event.status}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => router.push(`/events/${event.id}`)}
+                            >
+                              View
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </main>
       </div>
     </ProtectedRoute>

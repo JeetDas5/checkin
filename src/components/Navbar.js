@@ -27,6 +27,7 @@ import {
   Calendar,
   Users,
   Menu,
+  ShieldCheck,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -58,10 +59,19 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <h1 className="text-xl font-semibold tracking-tight">
-            CheckIn
-            </h1>
+            <h1 className="text-xl font-semibold tracking-tight">CheckIn</h1>
             <div className="hidden md:flex space-x-4">
+              {user?.role === "SUPER_ADMIN" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push("/admin")}
+                  className="text-slate-600 dark:text-slate-400"
+                >
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  Admin Panel
+                </Button>
+              )}
               {isAdmin && (
                 <Button
                   variant="ghost"
@@ -108,6 +118,19 @@ export default function Navbar() {
                   <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col space-y-4 mt-6">
+                  {user?.role === "SUPER_ADMIN" && (
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        router.push("/admin");
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <ShieldCheck className="mr-2 h-4 w-4" />
+                      Admin Panel
+                    </Button>
+                  )}
                   {isAdmin && (
                     <Button
                       variant="ghost"
